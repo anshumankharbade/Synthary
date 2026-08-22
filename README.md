@@ -77,6 +77,12 @@ youtube-summarizer/
         └── lib/api.ts            # typed fetch wrapper to the backend
 ```
 
+## Deploying
+
+- **Backend → Render:** New Web Service, root directory `backend`, build `npm install`, start `npm start`. Env vars: `GEMINI_API_KEY` (required), `MONGODB_URI` (optional), `CLIENT_ORIGIN` (set once you know the frontend's deployed URL). A `render.yaml` at the repo root can auto-configure most of this via Render's "Blueprint" option — if it doesn't pick it up cleanly, just set the same values manually in the dashboard.
+- **Frontend → Vercel:** Import the repo, root directory `frontend`, no config changes needed. Env var: `NEXT_PUBLIC_API_URL` set to the deployed Render URL.
+- Render's free tier spins down after ~15 min idle — the first request after that will be slow (30–60s) while it wakes back up. Worth a one-line note wherever you link this from your portfolio.
+
 ## Next up (from the roadmap)
 
 - **Phase 2:** JWT auth + dashboard history, "Chat with the content," export/share.
