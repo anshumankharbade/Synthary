@@ -20,7 +20,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gist — YouTube video summarizer",
+  title: "Synthary — YouTube video summarizer",
   description: "Paste a YouTube link, get a clean summary and key takeaways in seconds.",
 };
 

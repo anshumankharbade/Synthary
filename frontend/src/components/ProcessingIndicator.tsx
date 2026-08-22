@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STAGES = ["Reading transcript…", "Finding the key moments…", "Condensing to the gist…"];
+const STAGES = ["Reading transcript…", "Finding the key moments…", "Writing the synthesis…"];
 
 export default function ProcessingIndicator() {
   const [stageIndex, setStageIndex] = useState(0);

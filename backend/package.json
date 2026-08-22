@@ -1,5 +1,5 @@
 {
-  "name": "youtube-summarizer-backend",
+  "name": "synthary-backend",
   "version": "1.0.0",
   "description": "Backend API for the YouTube Summarizer MVP",
   "main": "src/server.js",
