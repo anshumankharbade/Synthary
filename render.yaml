@@ -1,0 +1,17 @@
+# Optional: lets Render auto-configure the backend via "New > Blueprint".
+# If it doesn't pick this up cleanly, just configure the service manually
+# in the dashboard instead — the manual steps work either way.
+services:
+  - type: web
+    name: youtube-summarizer-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false

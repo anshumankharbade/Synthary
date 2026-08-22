@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #131316;
+  --surface: #1c1c20;
+  --border: #2d2d33;
+  --foreground: #ececE6;
+  --muted: #8c8c94;
+  --accent: #e14b3a;
+  --accent-foreground: #131316;
+  --amber: #e0a239;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-amber: var(--amber);
+
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Signature moment: a scanning line while a transcript is being
+   condensed, echoing a tape counter / VU meter rather than a generic
+   spinner. Respects reduced-motion preferences. */
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+.animate-scan {
+  animation: scan 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scan {
+    animation: none;
+    width: 100%;
+    transform: none;
+  }
+}

@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables (never commit real secrets)
+.env
+.env.local
+**/.env
+**/.env.local
+
+# Build outputs
+.next/
+**/.next/
+dist/
+**/dist/
+*.tsbuildinfo
+
+# Misc
+.DS_Store
+*.log
