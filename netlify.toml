@@ -1,0 +1,11 @@
+[build]
+  # Tell Netlify to switch into the frontend folder
+  base = "frontend"
+  # Run the build command inside that folder
+  command = "npm run build"
+  # The built files are inside frontend/.next
+  publish = ".next"
+
+# CRITICAL: Force Netlify to use the official Next.js plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
