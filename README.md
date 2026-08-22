@@ -83,7 +83,3 @@ youtube-summarizer/
 - **Frontend → Vercel:** Import the repo, root directory `frontend`, no config changes needed. Env var: `NEXT_PUBLIC_API_URL` set to the deployed Render URL.
 - Render's free tier spins down after ~15 min idle — the first request after that will be slow (30–60s) while it wakes back up. Worth a one-line note wherever you link this from your portfolio.
 
-## Next up (from the roadmap)
-
-- **Phase 2:** JWT auth + dashboard history, "Chat with the content," export/share.
-- **Phase 3:** Audio/PDF upload, UI polish, full architecture README.
