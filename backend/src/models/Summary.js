@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
-// NOTE: no `user` field yet — that gets added in Phase 2 once JWT auth
-// is in place, so the dashboard can scope history per account.
+// Every summary now belongs to the user who created it — /api/summarize
+// is gated behind requireAuth, so this is always populated on write.
 const summarySchema = new mongoose.Schema(
   {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
     videoId: { type: String, required: true, index: true },
     videoUrl: { type: String, required: true },
     title: { type: String, default: null },

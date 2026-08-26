@@ -38,6 +38,7 @@ const summarizeVideo = asyncHandler(async (req, res) => {
   ]);
 
   const record = {
+    userId: req.userId,
     videoId,
     videoUrl: url,
     title: meta.title,

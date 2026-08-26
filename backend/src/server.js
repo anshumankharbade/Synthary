@@ -5,6 +5,8 @@ const cors = require("cors");
 
 const connectDB = require("./config/db");
 const summarizeRoutes = require("./routes/summarizeRoutes");
+const authRoutes = require("./routes/authRoutes");
+const summariesRoutes = require("./routes/summariesRoutes");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -15,6 +17,8 @@ app.use(express.json({ limit: "2mb" }));
 
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
+app.use("/api/auth", authRoutes);
+app.use("/api", summariesRoutes);
 app.use("/api", summarizeRoutes);
 
 // Anything under /api that didn't match a route above.
@@ -30,6 +34,13 @@ async function start() {
     );
   }
 
+  if (!process.env.JWT_SECRET) {
+    console.warn(
+      "⚠️  JWT_SECRET not set — signup/login will fail with a 500. " +
+        "Add any long random string to backend/.env, then restart."
+    );
+  }
+
   if (process.env.MONGODB_URI) {
     try {
       await connectDB();
@@ -37,7 +48,10 @@ async function start() {
       console.error("MongoDB connection failed — continuing without persistence:", err.message);
     }
   } else {
-    console.warn("MONGODB_URI not set — summaries won't be saved. See .env.example.");
+    console.warn(
+      "⚠️  MONGODB_URI not set — auth and history need a real database now. " +
+        "Signup/login will return a 503 until this is set. See .env.example."
+    );
   }
 
   app.listen(PORT, () => console.log(`Backend listening on http://localhost:${PORT}`));

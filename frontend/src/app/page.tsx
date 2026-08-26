@@ -1,6 +1,12 @@
+"use client";
+
+import Link from "next/link";
 import Summarizer from "@/components/Summarizer";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { user, isLoading } = useAuth();
+
   return (
     <main className="flex flex-1 flex-col items-center px-6 py-20 sm:py-28">
       <div className="w-full max-w-2xl">
@@ -20,7 +26,32 @@ export default function Home() {
         </p>
 
         <div className="mt-12">
-          <Summarizer />
+          {isLoading ? (
+            <p className="text-sm text-muted">Loading…</p>
+          ) : user ? (
+            <Summarizer />
+          ) : (
+            <div className="rounded-lg border border-border bg-surface px-6 py-8">
+              <p className="text-sm text-muted">
+                Create a free account to start summarizing and keep a history of what
+                you&apos;ve watched.
+              </p>
+              <div className="mt-4 flex gap-3">
+                <Link
+                  href="/signup"
+                  className="rounded-lg bg-accent px-5 py-2.5 font-display text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
+                >
+                  Sign up
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-lg border border-border px-5 py-2.5 text-sm text-foreground transition hover:border-accent hover:text-accent"
+                >
+                  Sign in
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -6,10 +6,7 @@ interface SummaryResultProps {
 }
 
 export default function SummaryResult({ result, onReset }: SummaryResultProps) {
-  const compression =
-    result.transcriptWordCount > 0
-      ? Math.round((1 - result.summaryWordCount / result.transcriptWordCount) * 100)
-      : null;
+  const { transcriptWordCount, summaryWordCount } = result;
 
   return (
     <div className="mt-8">
@@ -28,11 +25,14 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
           </a>
         </div>
 
-        {compression !== null && compression > 0 && (
-          <span className="shrink-0 rounded-full border border-amber/30 bg-amber/10 px-3 py-1 font-mono text-xs text-amber">
-            {result.transcriptWordCount.toLocaleString()} → {result.summaryWordCount.toLocaleString()} words
-          </span>
-        )}
+        {typeof transcriptWordCount === "number" &&
+          typeof summaryWordCount === "number" &&
+          transcriptWordCount > 0 &&
+          summaryWordCount < transcriptWordCount && (
+            <span className="shrink-0 rounded-full border border-amber/30 bg-amber/10 px-3 py-1 font-mono text-xs text-amber">
+              {transcriptWordCount.toLocaleString()} → {summaryWordCount.toLocaleString()} words
+            </span>
+          )}
       </div>
 
       <p className="mt-5 text-[15px] leading-relaxed text-foreground/90">{result.summary}</p>
