@@ -1,4 +1,4 @@
-# Synthary — Phase 1 MVP
+# Synthary - Phase 1 MVP
 
 Paste a YouTube URL, get 5 key bullet points and a ~100-word summary. No auth, no history yet — that's Phase 2.
 
