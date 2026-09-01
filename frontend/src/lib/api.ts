@@ -20,6 +20,13 @@ export interface AuthUser {
   createdAt?: string;
 }
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "model";
+  content: string;
+  createdAt: string;
+}
+
 export class ApiError extends Error {
   status?: number;
   constructor(message: string, status?: number) {
@@ -46,7 +53,8 @@ export function clearToken(): void {
 async function request<T>(
   path: string,
   options: RequestInit = {},
-  authRequired = false
+  authRequired = false,
+  timeoutMs = 15000
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -61,11 +69,12 @@ async function request<T>(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  // Without this, a slow/unreachable backend means every page's auth
-  // check (which runs on load, before anything else can render) just
-  // hangs forever instead of failing — worth guarding against directly.
+  // Guards against a slow/unreachable backend hanging forever. The
+  // default (15s) fits quick calls like auth checks; endpoints that
+  // chain multiple external API calls (summarize, chat) pass a longer
+  // value explicitly — see their definitions below.
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   let res: Response;
   try {
@@ -111,7 +120,8 @@ export async function summarizeVideo(url: string) {
   return request<SummaryResponse>(
     "/api/summarize",
     { method: "POST", body: JSON.stringify({ url }) },
-    true
+    true,
+    45000
   );
 }
 
@@ -125,4 +135,17 @@ export async function getSummaryById(id: string) {
 
 export async function deleteSummary(id: string) {
   return request<{ id: string }>(`/api/summaries/${id}`, { method: "DELETE" }, true);
+}
+
+export async function getChatMessages(summaryId: string) {
+  return request<ChatMessage[]>(`/api/summaries/${summaryId}/chat`, {}, true);
+}
+
+export async function postChatMessage(summaryId: string, message: string) {
+  return request<{ userMessage: ChatMessage; assistantMessage: ChatMessage }>(
+    `/api/summaries/${summaryId}/chat`,
+    { method: "POST", body: JSON.stringify({ message }) },
+    true,
+    60000
+  );
 }

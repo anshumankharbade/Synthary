@@ -1,4 +1,5 @@
 import type { SummaryResponse } from "@/lib/api";
+import ChatPanel from "./ChatPanel";
 
 interface SummaryResultProps {
   result: SummaryResponse;
@@ -47,6 +48,12 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
           </li>
         ))}
       </ul>
+
+      {result.id && (
+        <div className="mt-8">
+          <ChatPanel summaryId={result.id} />
+        </div>
+      )}
 
       <button
         type="button"

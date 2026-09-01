@@ -120,9 +120,11 @@ export default function DashboardPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
-                    <h2 className="truncate font-display text-base font-semibold text-foreground">
-                      {item.title || item.videoId}
-                    </h2>
+                    <Link href={`/dashboard/${item.id}`} className="min-w-0 truncate">
+                      <h2 className="truncate font-display text-base font-semibold text-foreground hover:text-accent">
+                        {item.title || item.videoId}
+                      </h2>
+                    </Link>
                     {item.createdAt && (
                       <time className="shrink-0 font-mono text-xs text-muted">
                         {new Date(item.createdAt).toLocaleDateString()}
@@ -131,14 +133,22 @@ export default function DashboardPage() {
                   </div>
                   <p className="mt-1 text-sm leading-relaxed text-muted">{item.summary}</p>
                   <div className="mt-2 flex items-center justify-between gap-3">
-                    <a
-                      href={item.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block text-xs text-accent underline underline-offset-4"
-                    >
-                      Watch on YouTube ↗
-                    </a>
+                    <div className="flex items-center gap-4">
+                      <a
+                        href={item.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block text-xs text-accent underline underline-offset-4"
+                      >
+                        Watch on YouTube ↗
+                      </a>
+                      <Link
+                        href={`/dashboard/${item.id}`}
+                        className="inline-block text-xs text-muted underline underline-offset-4 hover:text-accent"
+                      >
+                        Ask about this video
+                      </Link>
+                    </div>
 
                     {confirmingId === item.id ? (
                       <div className="flex shrink-0 items-center gap-3 font-mono text-xs uppercase tracking-widest">
