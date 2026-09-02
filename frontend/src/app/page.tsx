@@ -29,7 +29,14 @@ export default function Home() {
           {isLoading ? (
             <p className="text-sm text-muted">Loading…</p>
           ) : user ? (
-            <Summarizer />
+            <>
+              <Summarizer />
+              <p className="mt-4 text-xs leading-relaxed text-muted">
+                Note: transcript fetching can occasionally fail on this hosted demo —
+                YouTube rate-limits requests from cloud/datacenter IPs, a known,
+                industry-wide constraint that doesn&apos;t affect running this locally.
+              </p>
+            </>
           ) : (
             <div className="rounded-lg border border-border bg-surface px-6 py-8">
               <p className="text-sm text-muted">

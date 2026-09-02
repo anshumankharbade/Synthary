@@ -20,6 +20,7 @@ const summarizeVideo = asyncHandler(async (req, res) => {
   try {
     transcript = await getTranscript(videoId);
   } catch (err) {
+    console.error("Transcript fetch failed:", err?.message || err);
     throw new AppError(
       "Couldn't get a transcript for this video. It may have captions disabled, be private, or be age/region-restricted.",
       422
