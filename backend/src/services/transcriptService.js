@@ -1,4 +1,4 @@
-const { Innertube } = require("youtubei.js");
+const { YoutubeTranscript } = require("youtube-transcript");
 
 const HTML_ENTITIES = {
   "&amp;": "&",
@@ -10,21 +10,6 @@ const HTML_ENTITIES = {
 
 function decodeEntities(text) {
   return text.replace(/&amp;|&#39;|&quot;|&lt;|&gt;/g, (match) => HTML_ENTITIES[match]);
-}
-
-// Session creation does some setup work (deciphering config, etc.) — cache
-// it across requests instead of re-creating it every call.
-let clientPromise = null;
-function getClient() {
-  if (!clientPromise) {
-    clientPromise = Innertube.create({
-      generate_session_locally: true,
-      // We only need transcript text, never a playable stream, so skip
-      // fetching/parsing the JS player — faster init, one fewer request.
-      retrieve_player: false,
-    });
-  }
-  return clientPromise;
 }
 
 /**
@@ -58,31 +43,22 @@ function extractVideoId(rawUrl) {
 }
 
 /**
- * Fetches the transcript via youtubei.js, which talks to YouTube's
- * InnerTube API (the same one the youtube.com website itself uses)
- * rather than scraping the unofficial timedtext endpoint. Neither
- * approach is officially supported by YouTube, and both can be rate
- * limited or blocked — especially from cloud/datacenter IPs, a known,
- * widely-documented issue as of 2026. Callers should treat failures as
- * expected, not fatal.
+ * Fetches the transcript via the unofficial timedtext endpoint (through
+ * the `youtube-transcript` package) and flattens it into plain text.
+ * This endpoint isn't officially supported by YouTube, so it can break
+ * or return nothing for videos with captions disabled — callers should
+ * treat failures as expected, not fatal.
  */
 async function getTranscript(videoId) {
-  const yt = await getClient();
-  const info = await yt.getInfo(videoId);
-  const transcriptData = await info.getTranscript();
+  const segments = await YoutubeTranscript.fetchTranscript(videoId);
 
-  const segments = transcriptData?.transcript?.content?.body?.initial_segments ?? [];
-
-  const text = segments
-    .map((seg) => seg?.snippet?.toString?.())
-    .filter(Boolean)
-    .join(" ");
-
-  if (!text) {
+  if (!segments || segments.length === 0) {
     throw new Error("No transcript segments returned.");
   }
 
-  return decodeEntities(text).replace(/\s+/g, " ").trim();
+  return decodeEntities(segments.map((segment) => segment.text).join(" "))
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /**

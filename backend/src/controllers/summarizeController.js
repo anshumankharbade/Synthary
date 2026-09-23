@@ -40,6 +40,7 @@ const summarizeVideo = asyncHandler(async (req, res) => {
 
   const record = {
     userId: req.userId,
+    sourceType: "youtube",
     videoId,
     videoUrl: url,
     title: meta.title,
@@ -62,6 +63,8 @@ const summarizeVideo = asyncHandler(async (req, res) => {
     success: true,
     data: {
       id: saved?._id ?? null,
+      sourceType: "youtube",
+      sourceFilename: null,
       videoId,
       videoUrl: url,
       title: meta.title,
@@ -70,6 +73,7 @@ const summarizeVideo = asyncHandler(async (req, res) => {
       bulletPoints: aiResult.bulletPoints,
       transcriptWordCount: transcript.split(/\s+/).length,
       summaryWordCount: aiResult.summary.split(/\s+/).length,
+      shareToken: null,
     },
   });
 });

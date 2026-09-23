@@ -1,5 +1,7 @@
 import type { SummaryResponse } from "@/lib/api";
 import ChatPanel from "./ChatPanel";
+import ExportButtons from "./ExportButtons";
+import ShareButton from "./ShareButton";
 
 interface SummaryResultProps {
   result: SummaryResponse;
@@ -14,16 +16,23 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
       <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
         <div className="min-w-0">
           <h2 className="truncate font-display text-lg font-semibold text-foreground">
-            {result.title || "Video summary"}
+            {result.title || "Summary"}
           </h2>
-          <a
-            href={result.videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-xs text-muted transition hover:text-accent"
-          >
-            {result.videoUrl}
-          </a>
+          {result.sourceType === "youtube" && result.videoUrl ? (
+            <a
+              href={result.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-muted transition hover:text-accent"
+            >
+              {result.videoUrl}
+            </a>
+          ) : (
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              {result.sourceType === "audio" ? "Audio file" : "PDF"}
+              {result.sourceFilename ? ` · ${result.sourceFilename}` : ""}
+            </p>
+          )}
         </div>
 
         {typeof transcriptWordCount === "number" &&
@@ -50,9 +59,16 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
       </ul>
 
       {result.id && (
-        <div className="mt-8">
-          <ChatPanel summaryId={result.id} />
-        </div>
+        <>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
+            <ExportButtons summary={result} />
+            <ShareButton summaryId={result.id} initialShareToken={result.shareToken} />
+          </div>
+
+          <div className="mt-8">
+            <ChatPanel summaryId={result.id} />
+          </div>
+        </>
       )}
 
       <button
@@ -60,7 +76,7 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
         onClick={onReset}
         className="mt-8 font-mono text-xs uppercase tracking-widest text-muted transition hover:text-accent"
       >
-        ← Summarize another video
+        ← Summarize something else
       </button>
     </div>
   );

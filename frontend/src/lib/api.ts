@@ -1,10 +1,14 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const TOKEN_KEY = "synthary_token";
 
+export type SourceType = "youtube" | "audio" | "pdf";
+
 export interface SummaryResponse {
   id: string | null;
-  videoId: string;
-  videoUrl: string;
+  sourceType: SourceType;
+  sourceFilename?: string | null;
+  videoId?: string | null;
+  videoUrl?: string | null;
   title: string | null;
   thumbnailUrl: string | null;
   summary: string;
@@ -13,6 +17,19 @@ export interface SummaryResponse {
   summaryWordCount?: number;
   createdAt?: string;
   transcript?: string;
+  shareToken?: string | null;
+}
+
+export interface SharedSummary {
+  sourceType: SourceType;
+  sourceFilename?: string | null;
+  videoId?: string | null;
+  videoUrl?: string | null;
+  title: string | null;
+  thumbnailUrl: string | null;
+  summary: string;
+  bulletPoints: string[];
+  createdAt: string;
 }
 
 export interface AuthUser {
@@ -56,8 +73,12 @@ async function request<T>(
   authRequired = false,
   timeoutMs = 15000
 ): Promise<T> {
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    // FormData sets its own Content-Type (with the multipart boundary) —
+    // setting it manually here would break the upload.
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers as Record<string, string> | undefined),
   };
 
@@ -125,6 +146,17 @@ export async function summarizeVideo(url: string) {
   );
 }
 
+export async function uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+  return request<SummaryResponse>(
+    "/api/upload",
+    { method: "POST", body: formData },
+    true,
+    120000 // audio transcription especially can take a while
+  );
+}
+
 export async function getSummaries() {
   return request<SummaryResponse[]>("/api/summaries", {}, true);
 }
@@ -148,4 +180,17 @@ export async function postChatMessage(summaryId: string, message: string) {
     true,
     60000
   );
+}
+
+export async function createShareLink(id: string) {
+  return request<{ shareToken: string }>(`/api/summaries/${id}/share`, { method: "POST" }, true);
+}
+
+export async function deleteShareLink(id: string) {
+  return request<{ shared: boolean }>(`/api/summaries/${id}/share`, { method: "DELETE" }, true);
+}
+
+// Not authRequired — this is the public, no-login endpoint.
+export async function getSharedSummary(token: string) {
+  return request<SharedSummary>(`/api/shared/${token}`);
 }

@@ -8,6 +8,8 @@ const summarizeRoutes = require("./routes/summarizeRoutes");
 const authRoutes = require("./routes/authRoutes");
 const summariesRoutes = require("./routes/summariesRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const shareRoutes = require("./routes/shareRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
@@ -42,6 +44,8 @@ app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 app.use("/api/auth", authRoutes);
 app.use("/api", summariesRoutes);
 app.use("/api", chatRoutes);
+app.use("/api", shareRoutes);
+app.use("/api", uploadRoutes);
 app.use("/api", summarizeRoutes);
 
 // Anything under /api that didn't match a route above.
@@ -61,6 +65,13 @@ async function start() {
     console.warn(
       "⚠️  JWT_SECRET not set — signup/login will fail with a 500. " +
         "Add any long random string to backend/.env, then restart."
+    );
+  }
+
+  if (!process.env.ASSEMBLYAI_API_KEY) {
+    console.warn(
+      "⚠️  ASSEMBLYAI_API_KEY not set — audio uploads will fail (PDF uploads are unaffected). " +
+        "Add a free key from assemblyai.com to backend/.env, then restart."
     );
   }
 

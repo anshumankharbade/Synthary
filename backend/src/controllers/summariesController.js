@@ -11,6 +11,8 @@ const requireDb = require("../utils/requireDb");
 function toClientShape(doc, { includeTranscript = false } = {}) {
   return {
     id: doc._id.toString(),
+    sourceType: doc.sourceType,
+    sourceFilename: doc.sourceFilename ?? null,
     videoId: doc.videoId,
     videoUrl: doc.videoUrl,
     title: doc.title,
@@ -18,6 +20,7 @@ function toClientShape(doc, { includeTranscript = false } = {}) {
     summary: doc.summary,
     bulletPoints: doc.bulletPoints,
     createdAt: doc.createdAt,
+    shareToken: doc.shareToken ?? null,
     ...(includeTranscript ? { transcript: doc.transcript } : {}),
   };
 }

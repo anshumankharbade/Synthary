@@ -5,8 +5,20 @@ const mongoose = require("mongoose");
 const summarySchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    videoId: { type: String, required: true, index: true },
-    videoUrl: { type: String, required: true },
+
+    // "youtube" keeps videoId/videoUrl populated as before. "audio" and
+    // "pdf" (uploaded files) leave those null and populate
+    // sourceFilename instead — there's no external URL to link back to.
+    sourceType: {
+      type: String,
+      enum: ["youtube", "audio", "pdf"],
+      default: "youtube",
+      required: true,
+    },
+    videoId: { type: String, default: null, index: true },
+    videoUrl: { type: String, default: null },
+    sourceFilename: { type: String, default: null },
+
     title: { type: String, default: null },
     thumbnailUrl: { type: String, default: null },
 
@@ -17,6 +29,11 @@ const summarySchema = new mongoose.Schema(
 
     summary: { type: String, required: true },
     bulletPoints: { type: [String], default: [] },
+
+    // Null until the owner explicitly shares this summary. A separate
+    // random token (not the Mongo _id) so a public link can't be derived
+    // from anything else, and can be revoked independently by clearing it.
+    shareToken: { type: String, default: null, unique: true, sparse: true },
   },
   { timestamps: true }
 );
