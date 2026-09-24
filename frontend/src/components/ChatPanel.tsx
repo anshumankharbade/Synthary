@@ -6,13 +6,22 @@ import {
   postChatMessage,
   ApiError,
   type ChatMessage,
+  type SourceType,
 } from "@/lib/api";
 
 interface ChatPanelProps {
   summaryId: string;
+  sourceType?: SourceType;
 }
 
-export default function ChatPanel({ summaryId }: ChatPanelProps) {
+function contentNoun(sourceType?: SourceType): string {
+  if (sourceType === "audio") return "recording";
+  if (sourceType === "pdf") return "document";
+  return "video";
+}
+
+export default function ChatPanel({ summaryId, sourceType }: ChatPanelProps) {
+  const noun = contentNoun(sourceType);
   const [messages, setMessages] = useState<ChatMessage[] | null>(null);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -75,7 +84,7 @@ export default function ChatPanel({ summaryId }: ChatPanelProps) {
     <div className="rounded-lg border border-border bg-surface">
       <div className="border-b border-border px-5 py-3">
         <h3 className="font-mono text-xs uppercase tracking-widest text-muted">
-          Ask about this video
+          Ask about this {noun}
         </h3>
       </div>
 
@@ -92,7 +101,7 @@ export default function ChatPanel({ summaryId }: ChatPanelProps) {
 
         {messages !== null && messages.length === 0 && (
           <p className="text-sm text-muted">
-            Ask a follow-up question — answers are grounded in this video&apos;s transcript.
+            Ask a follow-up question — answers are grounded in this {noun}&apos;s transcript.
           </p>
         )}
 
@@ -130,7 +139,7 @@ export default function ChatPanel({ summaryId }: ChatPanelProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isSending}
-          placeholder="Ask a question about this video…"
+          placeholder={`Ask a question about this ${noun}…`}
           className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted/60 focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-50"
         />
         <button

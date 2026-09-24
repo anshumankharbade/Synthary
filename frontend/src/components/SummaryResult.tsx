@@ -66,7 +66,7 @@ export default function SummaryResult({ result, onReset }: SummaryResultProps) {
           </div>
 
           <div className="mt-8">
-            <ChatPanel summaryId={result.id} />
+            <ChatPanel summaryId={result.id} sourceType={result.sourceType} />
           </div>
         </>
       )}

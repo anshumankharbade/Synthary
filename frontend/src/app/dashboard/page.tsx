@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import {
-  getSummaries,
-  deleteSummary,
-  ApiError,
-  type SummaryResponse,
-} from "@/lib/api";
+import { getSummaries, deleteSummary, ApiError, type SummaryResponse } from "@/lib/api";
+
+function chatLinkLabel(sourceType: SummaryResponse["sourceType"]): string {
+  if (sourceType === "audio") return "Ask about this recording";
+  if (sourceType === "pdf") return "Ask about this document";
+  return "Ask about this video";
+}
 
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -32,9 +33,7 @@ export default function DashboardPage() {
     getSummaries()
       .then(setSummaries)
       .catch((err) =>
-        setError(
-          err instanceof ApiError ? err.message : "Couldn't load your history.",
-        ),
+        setError(err instanceof ApiError ? err.message : "Couldn't load your history.")
       );
   }, [user]);
 
@@ -49,9 +48,7 @@ export default function DashboardPage() {
       setConfirmingId(null);
     } catch (err) {
       setDeleteError(
-        err instanceof ApiError
-          ? err.message
-          : "Couldn't delete that. Please try again.",
+        err instanceof ApiError ? err.message : "Couldn't delete that. Please try again."
       );
     } finally {
       setDeletingId(null);
@@ -73,12 +70,8 @@ export default function DashboardPage() {
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           Dashboard
         </div>
-        <h1 className="font-display text-3xl font-semibold text-foreground">
-          Your history
-        </h1>
-        <p className="mt-2 text-sm text-muted">
-          Everything you&apos;ve summarized, newest first.
-        </p>
+        <h1 className="font-display text-3xl font-semibold text-foreground">Your history</h1>
+        <p className="mt-2 text-sm text-muted">Everything you&apos;ve summarized, newest first.</p>
 
         <div className="mt-10 flex flex-col gap-4">
           {error && (
@@ -119,10 +112,7 @@ export default function DashboardPage() {
           )}
 
           {summaries?.map((item) => (
-            <article
-              key={item.id}
-              className="rounded-lg border border-border bg-surface p-5"
-            >
+            <article key={item.id} className="rounded-lg border border-border bg-surface p-5">
               <div className="flex gap-4">
                 {item.thumbnailUrl && (
                   <Image
@@ -136,15 +126,9 @@ export default function DashboardPage() {
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
-                    <Link
-                      href={`/dashboard/${item.id}`}
-                      className="min-w-0 truncate"
-                    >
+                    <Link href={`/dashboard/${item.id}`} className="min-w-0 truncate">
                       <h2 className="truncate font-display text-base font-semibold text-foreground hover:text-accent">
-                        {item.title ||
-                          item.sourceFilename ||
-                          item.videoId ||
-                          "Untitled"}
+                        {item.title || item.sourceFilename || item.videoId || "Untitled"}
                       </h2>
                     </Link>
                     {item.createdAt && (
@@ -153,9 +137,6 @@ export default function DashboardPage() {
                       </time>
                     )}
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-muted">
-                    {item.summary}
-                  </p>
                   <div className="mt-2 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                       {item.sourceType === "youtube" && item.videoUrl ? (
@@ -176,7 +157,7 @@ export default function DashboardPage() {
                         href={`/dashboard/${item.id}`}
                         className="inline-block text-xs text-muted underline underline-offset-4 hover:text-accent"
                       >
-                        Ask about this video
+                        {chatLinkLabel(item.sourceType)}
                       </Link>
                     </div>
 

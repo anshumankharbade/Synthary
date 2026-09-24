@@ -28,9 +28,7 @@ export default function SummaryDetailPage() {
     getSummaryById(params.id)
       .then(setSummary)
       .catch((err) =>
-        setError(
-          err instanceof ApiError ? err.message : "Couldn't load this summary.",
-        ),
+        setError(err instanceof ApiError ? err.message : "Couldn't load this summary.")
       );
   }, [user, params.id]);
 
@@ -61,9 +59,7 @@ export default function SummaryDetailPage() {
           </div>
         )}
 
-        {!error && !summary && (
-          <p className="mt-6 text-sm text-muted">Loading…</p>
-        )}
+        {!error && !summary && <p className="mt-6 text-sm text-muted">Loading…</p>}
 
         {summary && (
           <>
@@ -94,17 +90,13 @@ export default function SummaryDetailPage() {
                 ) : (
                   <p className="font-mono text-xs uppercase tracking-widest text-muted">
                     {summary.sourceType === "audio" ? "Audio file" : "PDF"}
-                    {summary.sourceFilename
-                      ? ` · ${summary.sourceFilename}`
-                      : ""}
+                    {summary.sourceFilename ? ` · ${summary.sourceFilename}` : ""}
                   </p>
                 )}
               </div>
             </div>
 
-            <p className="mt-5 text-sm leading-relaxed text-muted">
-              {summary.summary}
-            </p>
+            <p className="mt-5 text-sm leading-relaxed text-muted">{summary.summary}</p>
 
             {summary.bulletPoints?.length > 0 && (
               <ul className="mt-5 flex flex-col gap-2">
@@ -121,14 +113,11 @@ export default function SummaryDetailPage() {
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
               <ExportButtons summary={summary} />
-              <ShareButton
-                summaryId={summary.id ?? params.id}
-                initialShareToken={summary.shareToken}
-              />
+              <ShareButton summaryId={summary.id ?? params.id} initialShareToken={summary.shareToken} />
             </div>
 
             <div className="mt-8">
-              <ChatPanel summaryId={summary.id ?? params.id} />
+              <ChatPanel summaryId={summary.id ?? params.id} sourceType={summary.sourceType} />
             </div>
           </>
         )}
